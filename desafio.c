@@ -7,11 +7,11 @@ struct memoria {
     char status;
     int inicio;
     int tamanho;
-    int *prox;
+    struct memoria *prox;
 };
 
 void gerarMemoriaAleatoria(struct memoria *);
-// void mostrarMemoria(struct memoria *);
+void mostrarMemoria(struct memoria *);
 
 int main () {
     struct memoria *mem = malloc(sizeof(struct memoria));
@@ -21,32 +21,39 @@ int main () {
     mem->prox = NULL;
 
     gerarMemoriaAleatoria(mem);
-    // mostrarMemoria(mem);
+    mostrarMemoria(mem);
 
     free(mem);
 }
 
 void gerarMemoriaAleatoria(struct memoria *mem) {
     struct memoria *atual = mem;
-    
-    for(int i = 0; atual != NULL; i++) {
+
+    do {
         float aleatorio = (float)rand() / RAND_MAX;
+        printf("Num : %.2f\n" , aleatorio);
 
         atual->status = (aleatorio < 0.2) ? 'p' : 'h';
 
         if (atual->status == 'h') {
-            atual->tamanho = rand() % 20 + 1;
+            atual->tamanho = rand() % 21;
         }
 
-        if (atual->prox == NULL || atual->inicio + atual->tamanho != atual->prox->inicio ) {
-            struct memoria *novo = malloc(sizeof(struct memoria));
+        if (atual->prox == NULL || (atual->inicio + atual->tamanho != atual->prox->inicio)) {
+            struct memoria *novo;
+            novo = malloc(sizeof(struct memoria));
             novo->prox = atual->prox;
             atual->prox = novo;
-            novo->inicio = atual->inicio + atual->tamanho;
+            novo->inicio = (atual->inicio + atual->tamanho);
         }
 
         atual = atual->prox;
-    }
-
+    } while(atual != NULL);
 }
 
+void mostrarMemoria(struct memoria * mem) {
+    while (mem != NULL)  {
+        printf("Tamanho da memória : %d , Status da memória : %c , Inicio : %d | Fim : %d\n" , mem->tamanho , mem->status , mem->inicio , (mem->inicio + mem->tamanho));
+        mem = mem->prox;    
+    }
+}
